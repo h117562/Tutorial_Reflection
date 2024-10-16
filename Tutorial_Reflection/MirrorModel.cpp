@@ -23,7 +23,7 @@ bool MirrorModel::Initialize(ID3D11Device* pDevice)
 
 	m_vertices = new VertexColor[6];
 	m_indices = new UINT[6];
-
+	
 	m_vertices[0].position = DirectX::XMFLOAT3(-1.0f, -1.0f, 0.0f);
 	m_vertices[0].color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 0.5f);
 

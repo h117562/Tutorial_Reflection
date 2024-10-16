@@ -241,6 +241,8 @@ void ApplicationClass::Render(HWND hwnd, InputClass* pInputClass)
 		m_ShaderManager->GetColorShader()->Render(m_Direct3D->GetDeviceContext(), world, view, proj);
 		m_rectangle->Render(m_Direct3D->GetDeviceContext());
 
+		view *= XMMatrixTranslation(0.0f, -2.0f, 0.0f);
+
 		m_ShaderManager->GetColorShader()->Render(m_Direct3D->GetDeviceContext(), world2, view, proj);
 		m_mirror->Render(m_Direct3D->GetDeviceContext());
 	}

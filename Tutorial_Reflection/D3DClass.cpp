@@ -342,7 +342,7 @@ bool D3DClass::Initialize(HWND hwnd)
 	viewport.TopLeftX = 0.0f;
 	viewport.TopLeftY = 0.0f;
 
-	//뷰포트 생성
+	//뷰포트 바인딩
 	m_deviceContext->RSSetViewports(1, &viewport);
 
 	//투영 행렬 설정
