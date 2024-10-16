@@ -1,6 +1,6 @@
-#include "Mirror.h"
+#include "MirrorModel.h"
 
-Mirror::Mirror()
+MirrorModel::MirrorModel()
 {
 	m_vertices = 0;
 	m_indices = 0;
@@ -9,15 +9,15 @@ Mirror::Mirror()
 	m_indexBuffer = 0;
 }
 
-Mirror::~Mirror()
+MirrorModel::~MirrorModel()
 {
 }
 
-Mirror::Mirror(const Mirror& other)
+MirrorModel::MirrorModel(const MirrorModel& other)
 {
 }
 
-bool Mirror::Initialize(ID3D11Device* pDevice)
+bool MirrorModel::Initialize(ID3D11Device* pDevice)
 {
 	HRESULT result;
 
@@ -25,22 +25,22 @@ bool Mirror::Initialize(ID3D11Device* pDevice)
 	m_indices = new UINT[6];
 
 	m_vertices[0].position = DirectX::XMFLOAT3(-1.0f, -1.0f, 0.0f);
-	m_vertices[0].color = DirectX::XMFLOAT4(0.5f, 0.5f, 0.0f, 0.5f);
+	m_vertices[0].color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 0.5f);
 
 	m_vertices[1].position = DirectX::XMFLOAT3(-1.0f, 1.0f, 0.0f);
-	m_vertices[1].color = DirectX::XMFLOAT4(0.5f, 0.5f, 0.0f, 0.5f);
+	m_vertices[1].color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 0.5f);
 
 	m_vertices[2].position = DirectX::XMFLOAT3(1.0f, -1.0f, 0.0f);
-	m_vertices[2].color = DirectX::XMFLOAT4(0.5f, 0.5f, 0.0f, 0.5f);
+	m_vertices[2].color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 0.5f);
 
 	m_vertices[3].position = DirectX::XMFLOAT3(1.0f, 1.0f, 0.0f);
-	m_vertices[3].color = DirectX::XMFLOAT4(0.5f, 0.5f, 0.0f, 0.5f);
+	m_vertices[3].color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 0.5f);
 
 	m_vertices[4].position = DirectX::XMFLOAT3(1.0f, -1.0f, 0.0f);
-	m_vertices[4].color = DirectX::XMFLOAT4(0.5f, 0.5f, 0.0f, 0.5f);
+	m_vertices[4].color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 0.5f);
 
 	m_vertices[5].position = DirectX::XMFLOAT3(-1.0f, 1.0f, 0.0f);
-	m_vertices[5].color = DirectX::XMFLOAT4(0.5f, 0.5f, 0.0f, 0.5f);
+	m_vertices[5].color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 0.5f);
 
 	m_indices[0] = 0;
 	m_indices[1] = 1;
@@ -93,7 +93,7 @@ bool Mirror::Initialize(ID3D11Device* pDevice)
 }
 
 
-void Mirror::Render(ID3D11DeviceContext* pDeviceContext)
+void MirrorModel::Render(ID3D11DeviceContext* pDeviceContext)
 {
 	//인풋 어셈블러에서 버퍼를 활성화하여 렌더링 할 수 있도록 설정
 	pDeviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
@@ -103,7 +103,7 @@ void Mirror::Render(ID3D11DeviceContext* pDeviceContext)
 
 
 
-void Mirror::Shutdown()
+void MirrorModel::Shutdown()
 {
 	//정점, 인덱스 버퍼 해제
 	m_vertexBuffer->Release();

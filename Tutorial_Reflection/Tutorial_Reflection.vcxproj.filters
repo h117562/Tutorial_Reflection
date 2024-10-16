@@ -75,10 +75,10 @@
     <ClCompile Include="SystemClass.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="RectangleClass.cpp">
+    <ClCompile Include="RectangleModel.cpp">
       <Filter>Model</Filter>
     </ClCompile>
-    <ClCompile Include="Mirror.cpp">
+    <ClCompile Include="MirrorModel.cpp">
       <Filter>Model</Filter>
     </ClCompile>
     <ClCompile Include="ReflectShaderClass.cpp">
@@ -125,10 +125,10 @@
     <ClInclude Include="GraphicStructures.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="RectangleClass.h">
+    <ClInclude Include="RectangleModel.h">
       <Filter>Model</Filter>
     </ClInclude>
-    <ClInclude Include="Mirror.h">
+    <ClInclude Include="MirrorModel.h">
       <Filter>Model</Filter>
     </ClInclude>
     <ClInclude Include="Global.h">

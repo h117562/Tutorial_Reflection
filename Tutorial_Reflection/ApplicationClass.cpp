@@ -8,7 +8,8 @@ ApplicationClass::ApplicationClass()
 	m_TextClass = 0;
 	m_ShaderManager = 0;
 
-	m_model = 0;
+	m_rectangle = 0;
+	m_mirror = 0;
 }
 
 ApplicationClass::~ApplicationClass()
@@ -90,16 +91,29 @@ bool ApplicationClass::Initialize(HWND hwnd)
 
 
 	{
-		m_model = new RectangleModel;
-		if (!m_model)
+		m_rectangle = new RectangleModel;
+		if (!m_rectangle)
 		{
 			return false;
 		}
 
-		result = m_model->Initialize(m_Direct3D->GetDevice());
+		result = m_rectangle->Initialize(m_Direct3D->GetDevice());
 		if (!result)
 		{
-			MessageBox(hwnd, L"Model Initialize Failed", L"Error", MB_OK);
+			MessageBox(hwnd, L"Rect Initialize Failed", L"Error", MB_OK);
+			return false;
+		}
+
+		m_mirror = new MirrorModel;
+		if (!m_mirror)
+		{
+			return false;
+		}
+
+		result = m_mirror->Initialize(m_Direct3D->GetDevice());
+		if (!result)
+		{
+			MessageBox(hwnd, L"Mirror Initialize Failed", L"Error", MB_OK);
 			return false;
 		}
 	}
@@ -109,11 +123,19 @@ bool ApplicationClass::Initialize(HWND hwnd)
 
 void ApplicationClass::Shutdown()
 {
-	if (m_model)
+
+	if (m_mirror)
 	{
-		m_model->Shutdown();
-		delete m_model;
-		m_model = 0;
+		m_mirror->Shutdown();
+		delete m_mirror;
+		m_mirror = 0;
+	}
+
+	if (m_rectangle)
+	{
+		m_rectangle->Shutdown();
+		delete m_rectangle;
+		m_rectangle = 0;
 	}
 
 	if (m_uiManager)
@@ -163,19 +185,6 @@ bool ApplicationClass::Frame(HWND hwnd, InputClass* pInputClass, FrameTimer* pFr
 	//그래픽 렌더링
 	Render(hwnd, pInputClass);
 
-	//카메라의 위치와 회전을 3D 오디오 계산에 사용
-	XMMATRIX inverseView;
-	XMVECTOR pos, lookAt, up;
-
-	//뷰 매트릭스의 역행렬을 구함
-	m_CameraClass->GetViewMatrix(inverseView);
-	inverseView = XMMatrixInverse(0, inverseView);
-
-	//내부 정보 추출
-	pos = inverseView.r[3];
-	lookAt = inverseView.r[2];
-	up = inverseView.r[1];
-
 	return true;
 }
 
@@ -208,7 +217,7 @@ void ApplicationClass::HandleInput(InputClass* pInputClass, FrameTimer* pFrameTi
 
 void ApplicationClass::Render(HWND hwnd, InputClass* pInputClass)
 {
-	XMMATRIX world, view, proj;
+	XMMATRIX view, proj;
 
 	m_CameraClass->Render();
 
@@ -219,12 +228,21 @@ void ApplicationClass::Render(HWND hwnd, InputClass* pInputClass)
 	m_TextClass->BeginDraw();
 
 	{
+		XMMATRIX world, world2;
+		XMMATRIX reflect;
+
 		m_Direct3D->GetWorldMatrix(world);
+		m_Direct3D->GetWorldMatrix(world2);
 		m_Direct3D->GetProjectionMatrix(proj);
 		m_CameraClass->GetViewMatrix(view);
 
+		world2 = world2 * XMMatrixRotationX(1.57f) * XMMatrixTranslation(0.0f, -2.0f, 0.0f);
+
 		m_ShaderManager->GetColorShader()->Render(m_Direct3D->GetDeviceContext(), world, view, proj);
-		m_model->Render(m_Direct3D->GetDeviceContext());
+		m_rectangle->Render(m_Direct3D->GetDeviceContext());
+
+		m_ShaderManager->GetColorShader()->Render(m_Direct3D->GetDeviceContext(), world2, view, proj);
+		m_mirror->Render(m_Direct3D->GetDeviceContext());
 	}
 
 	//UI 렌더링

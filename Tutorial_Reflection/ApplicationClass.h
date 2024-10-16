@@ -8,7 +8,8 @@
 #include "FrameTimer.h"
 #include "UIManager.h"
 #include "TextClass.h"
-#include "RectangleClass.h"
+#include "RectangleModel.h"
+#include "MirrorModel.h"
 
 class ApplicationClass
 {
@@ -32,6 +33,7 @@ private:
 	CameraClass* m_CameraClass;
 	UIManager* m_uiManager;
 
-	RectangleModel* m_model;
+	RectangleModel* m_rectangle;
+	MirrorModel* m_mirror;
 };
 #endif

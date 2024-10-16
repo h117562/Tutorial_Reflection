@@ -1,5 +1,5 @@
-#ifndef _MIRROR_H
-#define _MIRROR_H
+#ifndef _MIRROR_MODEL_H
+#define _MIRROR_MODEL_H
 
 #pragma comment(lib, "d3d11.lib")
 
@@ -7,12 +7,12 @@
 
 #include "GraphicStructures.h"
 
-class Mirror
+class MirrorModel
 {
 public:
-	Mirror();
-	~Mirror();
-	Mirror(const Mirror&);
+	MirrorModel();
+	~MirrorModel();
+	MirrorModel(const MirrorModel&);
 
 	bool Initialize(ID3D11Device*);
 	void Shutdown();
