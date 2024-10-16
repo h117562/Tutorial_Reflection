@@ -8,6 +8,7 @@ ApplicationClass::ApplicationClass()
 	m_TextClass = 0;
 	m_ShaderManager = 0;
 
+	m_renderTexture = 0;
 	m_rectangle = 0;
 	m_mirror = 0;
 }
@@ -91,6 +92,19 @@ bool ApplicationClass::Initialize(HWND hwnd)
 
 
 	{
+		m_renderTexture = new RenderTextureClass;
+		if (!m_renderTexture)
+		{
+			return false;
+		}
+
+		result = m_renderTexture->Initialize(m_Direct3D->GetDevice(), 256, 256, SCREEN_FAR, SCREEN_NEAR);
+		if (!result)
+		{
+			MessageBox(hwnd, L"Could not Initialize RenderTextureClass", L"Error", MB_OK);
+			return false;
+		}
+
 		m_rectangle = new RectangleModel;
 		if (!m_rectangle)
 		{
@@ -123,20 +137,29 @@ bool ApplicationClass::Initialize(HWND hwnd)
 
 void ApplicationClass::Shutdown()
 {
-
-	if (m_mirror)
 	{
-		m_mirror->Shutdown();
-		delete m_mirror;
-		m_mirror = 0;
+		if (m_mirror)
+		{
+			m_mirror->Shutdown();
+			delete m_mirror;
+			m_mirror = 0;
+		}
+
+		if (m_rectangle)
+		{
+			m_rectangle->Shutdown();
+			delete m_rectangle;
+			m_rectangle = 0;
+		}
+
+		if (m_renderTexture)
+		{
+			m_renderTexture->Shutdown();
+			delete m_renderTexture;
+			m_renderTexture = 0;
+		}
 	}
 
-	if (m_rectangle)
-	{
-		m_rectangle->Shutdown();
-		delete m_rectangle;
-		m_rectangle = 0;
-	}
 
 	if (m_uiManager)
 	{
@@ -217,9 +240,23 @@ void ApplicationClass::HandleInput(InputClass* pInputClass, FrameTimer* pFrameTi
 
 void ApplicationClass::Render(HWND hwnd, InputClass* pInputClass)
 {
-	XMMATRIX view, proj;
-
 	m_CameraClass->Render();
+
+	{
+		XMMATRIX world, view, proj;
+
+		m_Direct3D->GetWorldMatrix(world);
+		m_Direct3D->GetProjectionMatrix(proj);
+		m_CameraClass->GetViewMatrix(view);
+
+		m_renderTexture->SetRenderTarget(m_Direct3D->GetDeviceContext());
+		m_renderTexture->ClearRenderTarget(m_Direct3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 0.0f);
+
+		m_ShaderManager->GetColorShader()->Render(m_Direct3D->GetDeviceContext(), world, view, proj);
+		m_rectangle->Render(m_Direct3D->GetDeviceContext());
+
+		m_Direct3D->ResetRenderTarget();
+	}
 
 	//3D RenderTarget 초기화(특정 컬러로)
 	m_Direct3D->BeginScene(0.0f, 0.0f, 0.2f, 1.0f);
@@ -228,23 +265,19 @@ void ApplicationClass::Render(HWND hwnd, InputClass* pInputClass)
 	m_TextClass->BeginDraw();
 
 	{
-		XMMATRIX world, world2;
-		XMMATRIX reflect;
-
+		XMMATRIX world, view, proj;
+		
 		m_Direct3D->GetWorldMatrix(world);
-		m_Direct3D->GetWorldMatrix(world2);
 		m_Direct3D->GetProjectionMatrix(proj);
 		m_CameraClass->GetViewMatrix(view);
-
-		world2 = world2 * XMMatrixRotationX(1.57f) * XMMatrixTranslation(0.0f, -2.0f, 0.0f);
 
 		m_ShaderManager->GetColorShader()->Render(m_Direct3D->GetDeviceContext(), world, view, proj);
 		m_rectangle->Render(m_Direct3D->GetDeviceContext());
 
-		view *= XMMatrixTranslation(0.0f, -2.0f, 0.0f);
+		world = world * XMMatrixRotationX(1.57f) * XMMatrixTranslation(0.0f, -2.0f, 0.0f);
 
-		m_ShaderManager->GetColorShader()->Render(m_Direct3D->GetDeviceContext(), world2, view, proj);
-		m_mirror->Render(m_Direct3D->GetDeviceContext());
+		m_ShaderManager->GetTextureShader()->Render(m_Direct3D->GetDeviceContext(), world, view, proj);
+		m_mirror->Render(m_Direct3D->GetDeviceContext(), m_renderTexture->GetShaderResourceView());
 	}
 
 	//UI 렌더링

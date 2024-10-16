@@ -41,6 +41,8 @@ public:
 
 	void GetVideoCardInfo(char* description, int& memory);
 
+	void ResetRenderTarget();
+
 	void TurnZBufferOn();
 	void TurnZBufferOff();
 
@@ -58,6 +60,7 @@ private:
 	ID3D11DeviceContext* m_deviceContext;
 	IDXGISwapChain* m_swapChain;
 	ID3D11RenderTargetView* m_renderTargetView;
+	D3D11_VIEWPORT m_viewport;
 
 	ID3D11DepthStencilState* m_depthStencilState;
 	ID3D11DepthStencilState* m_depthDisabledStencilState;

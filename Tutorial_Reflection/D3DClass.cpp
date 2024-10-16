@@ -50,7 +50,7 @@ bool D3DClass::Initialize(HWND hwnd)
 
 	D3D11_RASTERIZER_DESC rasterDesc;
 	D3D11_BLEND_DESC blendStateDesc;
-	D3D11_VIEWPORT viewport;
+
 	float fieldOfView, screenAspect;
 
 	//기본 새로고침 빈도 초기화
@@ -144,7 +144,7 @@ bool D3DClass::Initialize(HWND hwnd)
 
 
 	//메모리 초기화
-	ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
+	ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
 
 	//스왑 체인 설정
 	swapChainDesc.BufferCount = 2;						//백 버퍼 갯수
@@ -215,7 +215,7 @@ bool D3DClass::Initialize(HWND hwnd)
 
 
 	//메모리 초기화
-	ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
+	ZeroMemory(&depthBufferDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
 	//깊이 버퍼 설정
 	depthBufferDesc.Width = SCREEN_WIDTH;	//너비
@@ -239,7 +239,7 @@ bool D3DClass::Initialize(HWND hwnd)
 
 
 	//메모리 초기화
-	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
+	ZeroMemory(&depthStencilDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
 
 	//깊이 스텐실 State 설정
 	depthStencilDesc.DepthEnable = true;//깊이 테스트 활성화
@@ -274,7 +274,7 @@ bool D3DClass::Initialize(HWND hwnd)
 
 
 	//메모리 초기화
-	ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
+	ZeroMemory(&depthStencilViewDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
 
 	//깊이 스텐실 뷰 설정
 	depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -333,17 +333,18 @@ bool D3DClass::Initialize(HWND hwnd)
 		return false;
 	}
 
+	ZeroMemory(&m_viewport, sizeof(D3D11_VIEWPORT));
 
 	//DirectX가 클립 공간 좌표를 렌더링 대상 공간에 매핑할 수 있도록 뷰포트를 설정함
-	viewport.Width = (float)SCREEN_WIDTH;
-	viewport.Height = (float)SCREEN_HEIGHT;
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-	viewport.TopLeftX = 0.0f;
-	viewport.TopLeftY = 0.0f;
+	m_viewport.Width = (float)SCREEN_WIDTH;
+	m_viewport.Height = (float)SCREEN_HEIGHT;
+	m_viewport.MinDepth = 0.0f;
+	m_viewport.MaxDepth = 1.0f;
+	m_viewport.TopLeftX = 0.0f;
+	m_viewport.TopLeftY = 0.0f;
 
 	//뷰포트 바인딩
-	m_deviceContext->RSSetViewports(1, &viewport);
+	m_deviceContext->RSSetViewports(1, &m_viewport);
 
 	//투영 행렬 설정
 	fieldOfView = 3.141592654f / 4.0f;
@@ -382,7 +383,7 @@ bool D3DClass::Initialize(HWND hwnd)
 	}
 
 	//변수 초기화
-	ZeroMemory(&blendStateDesc, sizeof(blendStateDesc));
+	ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
 
 	//블랜드 상태 설정(알파 블랜딩)
 	blendStateDesc.AlphaToCoverageEnable = false;
@@ -566,6 +567,14 @@ void D3DClass::GetVideoCardInfo(char* description, int& memory)
 {
 	strcpy_s(description, 128, m_videoCardDescription);
 	memory = m_videoCardMemory;
+	return;
+}
+
+void D3DClass::ResetRenderTarget()
+{
+	m_deviceContext->OMSetRenderTargets(1, &m_renderTargetView, m_depthStencilView);
+	m_deviceContext->RSSetViewports(1, &m_viewport);
+
 	return;
 }
 

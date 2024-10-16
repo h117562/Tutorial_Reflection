@@ -21,26 +21,26 @@ bool MirrorModel::Initialize(ID3D11Device* pDevice)
 {
 	HRESULT result;
 
-	m_vertices = new VertexColor[6];
+	m_vertices = new VertexTextureCoord[6];
 	m_indices = new UINT[6];
 	
 	m_vertices[0].position = DirectX::XMFLOAT3(-1.0f, -1.0f, 0.0f);
-	m_vertices[0].color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 0.5f);
+	m_vertices[0].textureCoord = DirectX::XMFLOAT2(0, 0);
 
 	m_vertices[1].position = DirectX::XMFLOAT3(-1.0f, 1.0f, 0.0f);
-	m_vertices[1].color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 0.5f);
+	m_vertices[1].textureCoord = DirectX::XMFLOAT2(0, 1.0f);
 
 	m_vertices[2].position = DirectX::XMFLOAT3(1.0f, -1.0f, 0.0f);
-	m_vertices[2].color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 0.5f);
+	m_vertices[2].textureCoord = DirectX::XMFLOAT2(1.0f, 0);
 
 	m_vertices[3].position = DirectX::XMFLOAT3(1.0f, 1.0f, 0.0f);
-	m_vertices[3].color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 0.5f);
+	m_vertices[3].textureCoord = DirectX::XMFLOAT2(1.0f, 1.0f);
 
 	m_vertices[4].position = DirectX::XMFLOAT3(1.0f, -1.0f, 0.0f);
-	m_vertices[4].color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 0.5f);
+	m_vertices[4].textureCoord = DirectX::XMFLOAT2(1.0f, 0);
 
 	m_vertices[5].position = DirectX::XMFLOAT3(-1.0f, 1.0f, 0.0f);
-	m_vertices[5].color = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 0.5f);
+	m_vertices[5].textureCoord = DirectX::XMFLOAT2(0, 1.0f);
 
 	m_indices[0] = 0;
 	m_indices[1] = 1;
@@ -55,7 +55,7 @@ bool MirrorModel::Initialize(ID3D11Device* pDevice)
 	//정점 버퍼에 대한 설명을 입력한다.
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(VertexColor) * m_indexCount;
+	vertexBufferDesc.ByteWidth = sizeof(VertexTextureCoord) * m_indexCount;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
@@ -93,8 +93,10 @@ bool MirrorModel::Initialize(ID3D11Device* pDevice)
 }
 
 
-void MirrorModel::Render(ID3D11DeviceContext* pDeviceContext)
+void MirrorModel::Render(ID3D11DeviceContext* pDeviceContext, ID3D11ShaderResourceView* texture)
 {
+	pDeviceContext->PSSetShaderResources(0, 1, &texture);
+
 	//인풋 어셈블러에서 버퍼를 활성화하여 렌더링 할 수 있도록 설정
 	pDeviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
 	pDeviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);

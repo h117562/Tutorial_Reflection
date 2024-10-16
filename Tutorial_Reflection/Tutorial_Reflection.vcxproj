@@ -143,6 +143,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RectangleModel.cpp" />
     <ClCompile Include="ReflectShaderClass.cpp" />
+    <ClCompile Include="RenderTextureClass.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="SystemClass.cpp" />
     <ClCompile Include="TextClass.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="InputClass.h" />
     <ClInclude Include="RectangleModel.h" />
     <ClInclude Include="ReflectShaderClass.h" />
+    <ClInclude Include="RenderTextureClass.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="SystemClass.h" />
     <ClInclude Include="TextClass.h" />

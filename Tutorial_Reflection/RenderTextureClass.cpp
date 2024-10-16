@@ -17,7 +17,7 @@ RenderTextureClass::RenderTextureClass(const RenderTextureClass& other)
 {
 }
 
-bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int textureHeight, float screenDepth, float screenNear, int format)
+bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int textureHeight, float screenDepth, float screenNear)
 {
     D3D11_TEXTURE2D_DESC textureDesc;
     HRESULT result;
@@ -25,23 +25,6 @@ bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int 
     D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
     D3D11_TEXTURE2D_DESC depthBufferDesc;
     D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-    DXGI_FORMAT textureFormat;
-
-
-    // Set the texture format.
-    switch (format)
-    {
-    case 1:
-    {
-        textureFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
-        break;
-    }
-    default:
-    {
-        textureFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
-        break;
-    }
-    }
 
     // Store the width and height of the render texture.
     m_textureWidth = textureWidth;
@@ -55,7 +38,7 @@ bool RenderTextureClass::Initialize(ID3D11Device* device, int textureWidth, int 
     textureDesc.Height = textureHeight;
     textureDesc.MipLevels = 1;
     textureDesc.ArraySize = 1;
-    textureDesc.Format = textureFormat;
+    textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     textureDesc.SampleDesc.Count = 1;
     textureDesc.Usage = D3D11_USAGE_DEFAULT;
     textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;

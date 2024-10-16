@@ -84,6 +84,9 @@
     <ClCompile Include="ReflectShaderClass.cpp">
       <Filter>Shader\ShaderClass</Filter>
     </ClCompile>
+    <ClCompile Include="RenderTextureClass.cpp">
+      <Filter>DirectX</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D3DClass.h">
@@ -136,6 +139,9 @@
     </ClInclude>
     <ClInclude Include="ReflectShaderClass.h">
       <Filter>Shader\ShaderClass</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTextureClass.h">
+      <Filter>DirectX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

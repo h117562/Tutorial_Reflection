@@ -16,17 +16,17 @@ public:
 
 	bool Initialize(ID3D11Device*);
 	void Shutdown();
-	void Render(ID3D11DeviceContext*);
+	void Render(ID3D11DeviceContext*, ID3D11ShaderResourceView*);
 
 private:
-	VertexColor* m_vertices;
+	VertexTextureCoord* m_vertices;
 	UINT* m_indices;
 	UINT m_indexCount;
 
 	ID3D11Buffer* m_vertexBuffer;
 	ID3D11Buffer* m_indexBuffer;
 
-	UINT stride = sizeof(VertexColor);
+	UINT stride = sizeof(VertexTextureCoord);
 	UINT offset = 0;
 
 
