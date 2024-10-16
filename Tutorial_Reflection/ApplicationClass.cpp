@@ -7,6 +7,8 @@ ApplicationClass::ApplicationClass()
 	m_uiManager = 0;
 	m_TextClass = 0;
 	m_ShaderManager = 0;
+
+	m_model = 0;
 }
 
 ApplicationClass::~ApplicationClass()
@@ -86,11 +88,33 @@ bool ApplicationClass::Initialize(HWND hwnd)
 	//기본 뷰 매트릭스 초기화
 	m_CameraClass->SetBaseViewMatrix();
 
+
+	{
+		m_model = new RectangleModel;
+		if (!m_model)
+		{
+			return false;
+		}
+
+		result = m_model->Initialize(m_Direct3D->GetDevice());
+		if (!result)
+		{
+			MessageBox(hwnd, L"Model Initialize Failed", L"Error", MB_OK);
+			return false;
+		}
+	}
+
 	return result;
 }
 
 void ApplicationClass::Shutdown()
 {
+	if (m_model)
+	{
+		m_model->Shutdown();
+		delete m_model;
+		m_model = 0;
+	}
 
 	if (m_uiManager)
 	{
@@ -194,9 +218,14 @@ void ApplicationClass::Render(HWND hwnd, InputClass* pInputClass)
 	//2D RenderTarget 초기화
 	m_TextClass->BeginDraw();
 
-	m_Direct3D->GetWorldMatrix(world);
-	m_Direct3D->GetProjectionMatrix(proj);
-	m_CameraClass->GetViewMatrix(view);
+	{
+		m_Direct3D->GetWorldMatrix(world);
+		m_Direct3D->GetProjectionMatrix(proj);
+		m_CameraClass->GetViewMatrix(view);
+
+		m_ShaderManager->GetColorShader()->Render(m_Direct3D->GetDeviceContext(), world, view, proj);
+		m_model->Render(m_Direct3D->GetDeviceContext());
+	}
 
 	//UI 렌더링
 	m_uiManager->Frame(m_Direct3D, hwnd, m_ShaderManager, m_TextClass, m_CameraClass, pInputClass);

@@ -78,7 +78,7 @@
     <ClCompile Include="RectangleClass.cpp">
       <Filter>Model</Filter>
     </ClCompile>
-    <ClCompile Include="GridClass.cpp">
+    <ClCompile Include="Mirror.cpp">
       <Filter>Model</Filter>
     </ClCompile>
     <ClCompile Include="ReflectShaderClass.cpp">
@@ -128,7 +128,7 @@
     <ClInclude Include="RectangleClass.h">
       <Filter>Model</Filter>
     </ClInclude>
-    <ClInclude Include="GridClass.h">
+    <ClInclude Include="Mirror.h">
       <Filter>Model</Filter>
     </ClInclude>
     <ClInclude Include="Global.h">
@@ -149,6 +149,12 @@
       <Filter>Shader\HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\ColorVS.hlsl">
+      <Filter>Shader\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\TextureVS.hlsl">
+      <Filter>Shader\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\TexturePS.hlsl">
       <Filter>Shader\HLSL</Filter>
     </FxCompile>
   </ItemGroup>

@@ -138,7 +138,7 @@
     <ClCompile Include="D3DClass.cpp" />
     <ClCompile Include="DebugInfo.cpp" />
     <ClCompile Include="FrameTimer.cpp" />
-    <ClCompile Include="GridClass.cpp" />
+    <ClCompile Include="Mirror.cpp" />
     <ClCompile Include="InputClass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RectangleClass.cpp" />
@@ -158,7 +158,7 @@
     <ClInclude Include="FrameTimer.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="GraphicStructures.h" />
-    <ClInclude Include="GridClass.h" />
+    <ClInclude Include="Mirror.h" />
     <ClInclude Include="InputClass.h" />
     <ClInclude Include="RectangleClass.h" />
     <ClInclude Include="ReflectShaderClass.h" />
@@ -179,6 +179,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\ReflectVS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\TexturePS.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\TextureVS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>

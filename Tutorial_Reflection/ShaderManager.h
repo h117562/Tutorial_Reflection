@@ -16,7 +16,7 @@ public:
 	void Shutdown();
 	TextureShaderClass* GetTextureShader();
 	ColorShaderClass* GetColorShader();
-	ReflectShaderClass* GetReflectShader();
+	//ReflectShaderClass* GetReflectShader();
 
 private:
 	TextureShaderClass* m_TextureShader;

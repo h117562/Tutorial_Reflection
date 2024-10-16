@@ -36,7 +36,7 @@ private:
 
 private:
 	DirectX::XMFLOAT3 m_position, m_rotation;
-	DirectX::XMMATRIX m_viewMatrix, m_baseViewMatrix;
+	DirectX::XMMATRIX m_viewMatrix, m_baseViewMatrix, m_reflectionMatrix;
 
 	DirectX::XMVECTOR m_upVector, m_lookAtVector;
 

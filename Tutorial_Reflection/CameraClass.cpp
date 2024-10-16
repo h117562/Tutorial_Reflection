@@ -117,9 +117,13 @@ void CameraClass::Render()
 	lookAtVector = DirectX::XMVectorAdd(positionVector, lookAtVector);
 	m_viewMatrix = DirectX::XMMatrixLookAtLH(positionVector, lookAtVector, upVector);
 
+	//ReflectionMatrix
+	{
+
+	}
+
 	return;
 }
-
 
 
 void CameraClass::MoveForward(bool keyDown)

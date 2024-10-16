@@ -10,7 +10,7 @@ struct Pin
 
 float4 main(Pin input) : SV_TARGET
 {
-    float4 textureColor = diffuseTexture.Sample(SampleType, input.tex);
+    float4 textureColor = diffuseTexture.Sample(SampleType, input.texcoord);
     float4 reflectionColor;
 	float2 reflectTexCoord;
 	float4 output;

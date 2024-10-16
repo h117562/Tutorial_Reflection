@@ -51,7 +51,7 @@ bool ReflectShaderClass::Initialize(ID3D11Device* pDevice, HWND hwnd)
 		//만약 오류 메시지가 없을 경우 파일을 찾을 수 없다는 의미
 		else
 		{
-			MessageBox(hwnd, vsFilename, L"Missing Vs Texture Shader File", MB_OK);
+			MessageBox(hwnd, vsFilename, L"Missing Vs Reflect Shader File", MB_OK);
 		}
 
 		return false;
@@ -71,7 +71,7 @@ bool ReflectShaderClass::Initialize(ID3D11Device* pDevice, HWND hwnd)
 		//만약 오류 메시지가 없을 경우 파일을 찾을 수 없다는 의미
 		else
 		{
-			MessageBox(hwnd, psFilename, L"Missing Ps Texture Shader File", MB_OK);
+			MessageBox(hwnd, psFilename, L"Missing Ps Reflect Shader File", MB_OK);
 		}
 
 		return false;
@@ -171,12 +171,12 @@ bool ReflectShaderClass::Initialize(ID3D11Device* pDevice, HWND hwnd)
 	return true;
 }
 
-bool ReflectShaderClass::Render(ID3D11DeviceContext* pDeviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
+bool ReflectShaderClass::Render(ID3D11DeviceContext* pDeviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, XMMATRIX reflectionMatrix)
 {
 	bool result;
 
 	//버퍼 업데이트
-	result = UpdateShaderBuffers(pDeviceContext, worldMatrix, viewMatrix, projectionMatrix);
+	result = UpdateShaderBuffers(pDeviceContext, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix);
 	if (!result)
 	{
 		return false;
@@ -251,7 +251,7 @@ void ReflectShaderClass::OutputShaderErrorMessage(ID3DBlob* errorMessage, HWND h
 
 //쉐이더에서 사용하는 버퍼를 업데이트
 bool ReflectShaderClass::UpdateShaderBuffers(ID3D11DeviceContext* pDeviceContext,
-	XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
+	XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, XMMATRIX reflectionMatrix)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -261,6 +261,7 @@ bool ReflectShaderClass::UpdateShaderBuffers(ID3D11DeviceContext* pDeviceContext
 	worldMatrix = XMMatrixTranspose(worldMatrix);
 	viewMatrix = XMMatrixTranspose(viewMatrix);
 	projectionMatrix = XMMatrixTranspose(projectionMatrix);
+	reflectionMatrix = XMMatrixTranspose(reflectionMatrix);
 
 	//상수 버퍼를 잠금 (GPU 액세스 비활성화) 
 	result = pDeviceContext->Map(m_matrixBuffer, NULL, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -276,6 +277,7 @@ bool ReflectShaderClass::UpdateShaderBuffers(ID3D11DeviceContext* pDeviceContext
 	dataPtr->worldMatrix = worldMatrix;
 	dataPtr->viewMatrix = viewMatrix;
 	dataPtr->projectionMatrix = projectionMatrix;
+	dataPtr->reflectionMatrix = reflectionMatrix;
 
 	//상수 버퍼를 잠금 해제 (GPU 액세스 다시 활성화)
 	pDeviceContext->Unmap(m_matrixBuffer, NULL);

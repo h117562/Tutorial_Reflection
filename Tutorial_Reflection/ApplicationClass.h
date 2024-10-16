@@ -8,6 +8,7 @@
 #include "FrameTimer.h"
 #include "UIManager.h"
 #include "TextClass.h"
+#include "RectangleClass.h"
 
 class ApplicationClass
 {
@@ -30,5 +31,7 @@ private:
 	ShaderManager* m_ShaderManager;
 	CameraClass* m_CameraClass;
 	UIManager* m_uiManager;
+
+	RectangleModel* m_model;
 };
 #endif

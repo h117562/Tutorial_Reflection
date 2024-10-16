@@ -131,7 +131,7 @@ bool ColorShaderClass::Initialize(ID3D11Device* pDevice, HWND hwnd)
 	ZeroMemory(&matrixBufferDesc, sizeof(D3D11_BUFFER_DESC));
 
 	//매트릭스 버퍼 설정
-	matrixBufferDesc.ByteWidth = sizeof(MatrixBuffer0);//버퍼 크기
+	matrixBufferDesc.ByteWidth = sizeof(MatrixBuffer);//버퍼 크기
 	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;//GPU(읽기 전용)와 CPU(쓰기 전용)에서 액세스 가능 (매 프레임 마다 업데이트)
 	matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;//버퍼를 상수 버퍼로 바인딩
 	matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;//CPU 액세스 유형
@@ -226,7 +226,7 @@ bool ColorShaderClass::UpdateShaderBuffers(ID3D11DeviceContext* pDeviceContext,
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	MatrixBuffer0* dataPtr = 0;
+	MatrixBuffer* dataPtr = 0;
 
 	//행렬 전치
 	worldMatrix = XMMatrixTranspose(worldMatrix);
@@ -241,7 +241,7 @@ bool ColorShaderClass::UpdateShaderBuffers(ID3D11DeviceContext* pDeviceContext,
 	}
 
 	//정점 쉐이더의 상수 버퍼의 포인터를 저장
-	dataPtr = (MatrixBuffer0*)mappedResource.pData;
+	dataPtr = (MatrixBuffer*)mappedResource.pData;
 
 	//매개변수로 가져온 데이터로 업데이트
 	dataPtr->worldMatrix = worldMatrix;
