@@ -111,7 +111,7 @@ bool ApplicationClass::Initialize(HWND hwnd)
 			return false;
 		}
 
-		result = m_rectangle->Initialize(m_Direct3D->GetDevice());
+		result = m_rectangle->Initialize(m_Direct3D->GetDevice(), m_Direct3D->GetDeviceContext());
 		if (!result)
 		{
 			MessageBox(hwnd, L"Rect Initialize Failed", L"Error", MB_OK);
@@ -246,13 +246,24 @@ void ApplicationClass::Render(HWND hwnd, InputClass* pInputClass)
 		XMMATRIX world, view, proj;
 
 		m_Direct3D->GetWorldMatrix(world);
-		m_Direct3D->GetProjectionMatrix(proj);
+		m_Direct3D->GetOrthoMatrix(proj);
 		m_CameraClass->GetViewMatrix(view);
 
 		m_renderTexture->SetRenderTarget(m_Direct3D->GetDeviceContext());
-		m_renderTexture->ClearRenderTarget(m_Direct3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 0.0f);
+		m_renderTexture->ClearRenderTarget(m_Direct3D->GetDeviceContext(), 0.0f, 0.0f, 0.5f, 1.0f);
 
-		m_ShaderManager->GetColorShader()->Render(m_Direct3D->GetDeviceContext(), world, view, proj);
+		world = world * XMMatrixRotationX(1.57f) * XMMatrixTranslation(0.0f, -2.0f, 0.0f);
+
+		XMVECTOR plane = XMPlaneFromPoints(
+			XMVectorSet(-1.0f, -1.0f, 0.0f, 0.0f), 
+			XMVectorSet(-1.0f, 1.0f, 0.0f, 0.0f),
+			XMVectorSet(1.0f, -1.0f, 0.0f, 0.0f));
+
+		XMMATRIX reflectionMatrix = XMMatrixReflect(plane);
+
+		reflectionMatrix = reflectionMatrix * world;
+	
+		m_ShaderManager->GetColorShader()->Render(m_Direct3D->GetDeviceContext(), world, reflectionMatrix, proj);
 		m_rectangle->Render(m_Direct3D->GetDeviceContext());
 
 		m_Direct3D->ResetRenderTarget();
@@ -271,7 +282,7 @@ void ApplicationClass::Render(HWND hwnd, InputClass* pInputClass)
 		m_Direct3D->GetProjectionMatrix(proj);
 		m_CameraClass->GetViewMatrix(view);
 
-		m_ShaderManager->GetColorShader()->Render(m_Direct3D->GetDeviceContext(), world, view, proj);
+		m_ShaderManager->GetTextureShader()->Render(m_Direct3D->GetDeviceContext(), world, view, proj);
 		m_rectangle->Render(m_Direct3D->GetDeviceContext());
 
 		world = world * XMMatrixRotationX(1.57f) * XMMatrixTranslation(0.0f, -2.0f, 0.0f);

@@ -350,11 +350,11 @@ bool D3DClass::Initialize(HWND hwnd)
 	fieldOfView = 3.141592654f / 4.0f;
 	screenAspect = (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT;
 
+	//기본 월드 행렬 생성
+	m_worldMatrix = DirectX::XMMatrixIdentity();
+
 	//Perspective Projection 행렬 생성
 	m_projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(fieldOfView, screenAspect, SCREEN_NEAR, SCREEN_FAR);
-
-	//월드 행렬 초기화
-	m_worldMatrix = DirectX::XMMatrixIdentity();
 
 	//2D 렌더링을 위해 Orthographic Projection(직교 투영) 행렬 생성
 	m_orthoMatrix = DirectX::XMMatrixOrthographicLH((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT, SCREEN_NEAR, SCREEN_FAR);
