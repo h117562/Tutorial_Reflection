@@ -99,8 +99,6 @@ bool RectangleModel::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDev
 		return false;
 	}
 
-
-
 	result = DirectX::CreateTextureEx(pDevice, 
 		image.GetImages(), 
 		image.GetImageCount(), 
@@ -118,10 +116,10 @@ bool RectangleModel::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDev
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
 	ZeroMemory(&shaderResourceViewDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
-	shaderResourceViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	shaderResourceViewDesc.Format = image.GetMetadata().format;
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-	shaderResourceViewDesc.Texture2D.MipLevels = 1;
+	shaderResourceViewDesc.Texture2D.MipLevels = -1;
 
 	result = pDevice->CreateShaderResourceView(m_texture, &shaderResourceViewDesc, &m_textureView);
 	if (FAILED(result))
