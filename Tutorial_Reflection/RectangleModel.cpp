@@ -6,7 +6,7 @@ RectangleModel::RectangleModel()
 	m_indices = 0;
 	m_vertexBuffer = 0;
 	m_indexBuffer = 0;
-	m_texture = 0;
+	m_resource = 0;
 }
 
 RectangleModel::~RectangleModel()
@@ -41,8 +41,6 @@ bool RectangleModel::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDev
 
 	m_vertices[5].position = DirectX::XMFLOAT3(-1.0f, 1.0f, 0.0f);
 	m_vertices[5].textureCoord = DirectX::XMFLOAT2(0.0f, 0.0f); // 왼쪽 위
-
-
 
 	m_indices[0] = 0;
 	m_indices[1] = 1;
@@ -90,25 +88,25 @@ bool RectangleModel::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDev
 		return false;
 	}
 
+	const wchar_t* filename = L"../data/sampleTex.png";//텍스처 경로
+	DirectX::ScratchImage img;
 
-	const wchar_t* filename = L"../data/sampleTex.png";
-	DirectX::ScratchImage image;//자동 메모리 반환
-	result = DirectX::LoadFromWICFile(filename, DirectX::WIC_FLAGS_NONE, nullptr, image);
+	result = DirectX::LoadFromWICFile(filename, DirectX::WIC_FLAGS_NONE, nullptr, img);
 	if (FAILED(result)) 
 	{
 		return false;
 	}
 
 	result = DirectX::CreateTextureEx(pDevice, 
-		image.GetImages(), 
-		image.GetImageCount(), 
-		image.GetMetadata(), 
+		img.GetImages(), 
+		img.GetImageCount(), 
+		img.GetMetadata(), 
 		D3D11_USAGE_DEFAULT,
 		D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
 		0,
 		0,
 		DirectX::CREATETEX_DEFAULT,
-		&m_texture);
+		&m_resource);
 	if (FAILED(result))
 	{
 		return false;
@@ -116,15 +114,15 @@ bool RectangleModel::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDev
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
 	ZeroMemory(&shaderResourceViewDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
-	shaderResourceViewDesc.Format = image.GetMetadata().format;
+	shaderResourceViewDesc.Format = img.GetMetadata().format;
 	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-	shaderResourceViewDesc.Texture2D.MipLevels = -1;
+	shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
-	result = pDevice->CreateShaderResourceView(m_texture, &shaderResourceViewDesc, &m_textureView);
+	result = pDevice->CreateShaderResourceView(m_resource, &shaderResourceViewDesc, &m_resourceView);
 	if (FAILED(result))
 	{
-		m_textureView = NULL;
+		m_resourceView = NULL;
 	}
 
 	return true;
@@ -133,7 +131,7 @@ bool RectangleModel::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDev
 
 void RectangleModel::Render(ID3D11DeviceContext* pDeviceContext)
 {
-	pDeviceContext->PSSetShaderResources(0, 1, &m_textureView);
+	pDeviceContext->PSSetShaderResources(0, 1, &m_resourceView);
 
 	//인풋 어셈블러에서 버퍼를 활성화하여 렌더링 할 수 있도록 설정
 	pDeviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
@@ -146,16 +144,16 @@ void RectangleModel::Render(ID3D11DeviceContext* pDeviceContext)
 void RectangleModel::Shutdown()
 {
 
-	if (m_textureView)
+	if (m_resourceView)
 	{
-		m_textureView->Release();
-		m_textureView = 0;
+		m_resourceView->Release();
+		m_resourceView = 0;
 	}
 
-	if (m_texture)
+	if (m_resource)
 	{
-		m_texture->Release();
-		m_texture = 0;
+		m_resource->Release();
+		m_resource = 0;
 	}
 
 	//정점, 인덱스 버퍼 해제

@@ -26,8 +26,8 @@ private:
 	UINT* m_indices;
 	UINT m_indexCount;
 
-	ID3D11Resource* m_texture;
-	ID3D11ShaderResourceView* m_textureView;
+	ID3D11Resource* m_resource;
+	ID3D11ShaderResourceView* m_resourceView;
 
 	ID3D11Buffer* m_vertexBuffer;
 	ID3D11Buffer* m_indexBuffer;

@@ -250,7 +250,7 @@ void ApplicationClass::Render(HWND hwnd, InputClass* pInputClass)
 		m_CameraClass->GetViewMatrix(view);
 
 		m_renderTexture->SetRenderTarget(m_Direct3D->GetDeviceContext());
-		m_renderTexture->ClearRenderTarget(m_Direct3D->GetDeviceContext(), 0.0f, 0.0f, 0.5f, 1.0f);
+		m_renderTexture->ClearRenderTarget(m_Direct3D->GetDeviceContext(), 0.0f, 0.0f, 0.3f, 1.0f);
 
 		world = world * XMMatrixRotationX(1.57f) * XMMatrixTranslation(0.0f, -2.0f, 0.0f);
 
