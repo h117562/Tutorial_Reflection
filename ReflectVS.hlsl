@@ -15,8 +15,8 @@ struct Vin
 struct VOut
 {
     float4 pos : SV_POSITION;
-    float2 texcoord : TEXCOORD;
-	float4 reflectionPos : TEXCOORD;
+    float2 texcoord : TEXCOORD0;
+	float4 reflectionPos : TEXCOORD1;
 };
 
 VOut main(Vin input)
@@ -29,8 +29,9 @@ VOut main(Vin input)
 	output.pos = mul(output.pos, Projection);
 	output.texcoord = input.texcoord;
 
-	reflectProjectWorld = mul(Reflection, projectionMatrix);
-    reflectProjectWorld = mul(worldMatrix, reflectProjectWorld);
+	reflectProjectWorld = mul(Reflection, Projection);
+    reflectProjectWorld = mul(World, reflectProjectWorld);
+
 	output.reflectionPos = mul(input.pos, reflectProjectWorld);
 
 	return output;

@@ -22,11 +22,11 @@ struct MatrixBuffer
 	DirectX::XMMATRIX projectionMatrix;
 };
 
-struct ExtendedVertexTextureCoord
+struct ExtendedVertex
 {
 	DirectX::XMFLOAT3 position;
 	DirectX::XMFLOAT2 textureCoord;
-	DirectX::XMFLOAT2 reflectionPosition;
+	DirectX::XMFLOAT2 normal;
 };
 
 struct ExtendedMatrixBuffer

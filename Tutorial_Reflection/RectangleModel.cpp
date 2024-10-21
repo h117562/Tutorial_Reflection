@@ -55,7 +55,7 @@ bool RectangleModel::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pDev
 	//정점 버퍼에 대한 설명을 입력한다.
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(VertexColor) * m_indexCount;
+	vertexBufferDesc.ByteWidth = sizeof(VertexTextureCoord) * m_indexCount;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;

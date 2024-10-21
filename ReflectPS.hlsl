@@ -4,8 +4,8 @@ SamplerState SampleType;
 struct Pin
 {
 	float4 pos : SV_POSITION;
-	float2 texcoord : TEXCOORD;
-	float4 reflectionPos : TEXCOORD;
+	float2 texcoord : TEXCOORD0;
+	float4 reflectionPos : TEXCOORD1;
 };
 
 float4 main(Pin input) : SV_TARGET
