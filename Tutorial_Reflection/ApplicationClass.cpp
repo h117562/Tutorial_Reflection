@@ -98,7 +98,7 @@ bool ApplicationClass::Initialize(HWND hwnd)
 			return false;
 		}
 
-		result = m_renderTexture->Initialize(m_Direct3D->GetDevice(), 256, 256, SCREEN_FAR, SCREEN_NEAR);
+		result = m_renderTexture->Initialize(m_Direct3D->GetDevice(), 512, 512, SCREEN_FAR, SCREEN_NEAR);
 		if (!result)
 		{
 			MessageBox(hwnd, L"Could not Initialize RenderTextureClass", L"Error", MB_OK);
@@ -242,25 +242,24 @@ void ApplicationClass::Render(HWND hwnd, InputClass* pInputClass)
 {
 	m_CameraClass->Render();
 
-	{
-		m_renderTexture->SetRenderTarget(m_Direct3D->GetDeviceContext());
-		m_renderTexture->ClearRenderTarget(m_Direct3D->GetDeviceContext(), 0.0f, 0.0f, 0.3f, 1.0f);
+	//{
+	//	m_renderTexture->SetRenderTarget(m_Direct3D->GetDeviceContext());
+	//	m_renderTexture->ClearRenderTarget(m_Direct3D->GetDeviceContext(), 0.0f, 0.0f, 0.3f, 1.0f);
 
 
-		XMMATRIX world, view, proj;
+	//	XMMATRIX world, view, proj;
 
-		m_Direct3D->GetWorldMatrix(world);
-		m_Direct3D->GetOrthoMatrix(proj);
-		m_CameraClass->GetViewMatrix(view);
+	//	m_Direct3D->GetWorldMatrix(world);
+	//	m_renderTexture->GetProjectionMatrix(proj);
+	//	m_CameraClass->GetViewMatrix(view);
 
-		world = world * XMMatrixRotationX(1.8f) * XMMatrixTranslation(0.0f, -2.0f, 0.0f);
+	//	world = XMMatrixIdentity();
 
-		m_ShaderManager->GetTextureShader()->Render(m_Direct3D->GetDeviceContext(), XMMatrixIdentity(), view, proj);
-		m_rectangle->Render(m_Direct3D->GetDeviceContext());
+	//	m_ShaderManager->GetTextureShader()->Render(m_Direct3D->GetDeviceContext(), world, view, proj);
+	//	m_rectangle->Render(m_Direct3D->GetDeviceContext());
 
-
-		m_Direct3D->ResetRenderTarget();
-	}
+	//	m_Direct3D->ResetRenderTarget();
+	//}
 
 	//3D RenderTarget 초기화(특정 컬러로)
 	m_Direct3D->BeginScene(0.0f, 0.0f, 0.2f, 1.0f);
@@ -269,20 +268,51 @@ void ApplicationClass::Render(HWND hwnd, InputClass* pInputClass)
 	m_TextClass->BeginDraw();
 
 	{
-		XMMATRIX world, view, proj;
+		XMMATRIX rectWorld, view, proj;
 		
-		m_Direct3D->GetWorldMatrix(world);
 		m_Direct3D->GetProjectionMatrix(proj);
 		m_CameraClass->GetViewMatrix(view);
-
-		m_ShaderManager->GetTextureShader()->Render(m_Direct3D->GetDeviceContext(), world, view, proj);
+		rectWorld = XMMatrixIdentity() * XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+		m_ShaderManager->GetTextureShader()->Render(m_Direct3D->GetDeviceContext(), rectWorld, view, proj);
 		m_rectangle->Render(m_Direct3D->GetDeviceContext());
 
-		world = world * XMMatrixRotationX(1.8f) * XMMatrixTranslation(0.0f, -2.0f, 0.0f);
 
-		m_ShaderManager->GetTextureShader()->Render(m_Direct3D->GetDeviceContext(), world, view, proj);
-		m_mirror->Render(m_Direct3D->GetDeviceContext(), m_renderTexture->GetShaderResourceView());
+		m_Direct3D->TurnMask();
+
+		XMMATRIX mirrorWorld;
+
+		mirrorWorld = XMMatrixIdentity() * XMMatrixRotationX(XM_PI/2) * XMMatrixTranslation(0.0f, -1.0f, 0.0f) * XMMatrixScaling(2,2,2);
+
+		m_ShaderManager->GetTextureShader()->Render(m_Direct3D->GetDeviceContext(), mirrorWorld, view, proj);
+		m_mirror->Render(m_Direct3D->GetDeviceContext(), nullptr);
+
+		XMVECTOR pos1, pos2, pos3;
+
+		pos1 = XMVectorSet(-1.0f, -1.0f, 0.0f, 0);
+		pos2 = XMVectorSet(-1.0f, 1.0f, 0.0f, 0);
+		pos3 = XMVectorSet(1.0f, -1.0f, 0.0f, 0);
+
+		pos1 = XMVector3Transform(pos1, mirrorWorld);
+		pos2 = XMVector3Transform(pos2, mirrorWorld);
+		pos3 = XMVector3Transform(pos3, mirrorWorld);
+
+		XMVECTOR plane = XMPlaneFromPoints(
+			pos1,
+			pos2,
+			pos3
+		);
+		
+		m_Direct3D->TurnMirror();
+
+		XMMATRIX reflectMat = rectWorld * XMMatrixReflect(plane);
+
+		m_ShaderManager->GetTextureShader()->Render(m_Direct3D->GetDeviceContext(), reflectMat, view, proj);
+		m_rectangle->Render(m_Direct3D->GetDeviceContext());
+	
+		m_Direct3D->TurnZBufferOn();
+
 	}
+
 
 	//UI 렌더링
 	m_uiManager->Frame(m_Direct3D, hwnd, m_ShaderManager, m_TextClass, m_CameraClass, pInputClass);

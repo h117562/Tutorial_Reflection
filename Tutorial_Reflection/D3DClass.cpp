@@ -272,6 +272,95 @@ bool D3DClass::Initialize(HWND hwnd)
 	//깊이 스텐실 State 적용
 	m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 1);
 
+	//2D 깊이 스텐실 State 설정
+	depthDisabledStencilDesc.DepthEnable = false;
+	depthDisabledStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthDisabledStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+	depthDisabledStencilDesc.StencilEnable = true;
+	depthDisabledStencilDesc.StencilReadMask = 0xFF;
+	depthDisabledStencilDesc.StencilWriteMask = 0xFF;
+
+	//앞면 픽셀의 경우 작업할 스텐실
+	depthDisabledStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthDisabledStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	//뒷면 픽셀의 경우 작업할 스텐실
+	depthDisabledStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthDisabledStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthDisabledStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	//2D 깊이 스텐실 상태 생성
+	result = m_device->CreateDepthStencilState(&depthDisabledStencilDesc, &m_depthDisabledStencilState);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	{//거울용
+		D3D11_DEPTH_STENCIL_DESC mirrorDesc;
+		ZeroMemory(&mirrorDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+
+		mirrorDesc.DepthEnable = true;
+		mirrorDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+		mirrorDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+		mirrorDesc.StencilEnable = true;
+		mirrorDesc.StencilReadMask = 0xFF;
+		mirrorDesc.StencilWriteMask = 0xFF;
+
+
+		mirrorDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		mirrorDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		mirrorDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+		mirrorDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+
+		mirrorDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		mirrorDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		mirrorDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+		mirrorDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+		result = m_device->CreateDepthStencilState(&mirrorDesc, &m_maskState);
+		if (FAILED(result))
+		{
+			return false;
+		}
+
+
+		D3D11_DEPTH_STENCIL_DESC maskDesc;
+		ZeroMemory(&maskDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+
+		maskDesc.DepthEnable = true;
+		maskDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		maskDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+		maskDesc.StencilEnable = true;
+		maskDesc.StencilReadMask = 0xFF;
+		maskDesc.StencilWriteMask = 0xFF;
+
+
+		maskDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		maskDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		maskDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		maskDesc.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;
+
+
+		maskDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		maskDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		maskDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		maskDesc.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
+
+		result = m_device->CreateDepthStencilState(&maskDesc, &m_mirrorState);
+		if (FAILED(result))
+		{
+			return false;
+		}
+	}
+
 
 	//메모리 초기화
 	ZeroMemory(&depthStencilViewDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
@@ -293,7 +382,7 @@ bool D3DClass::Initialize(HWND hwnd)
 
 	//기본 레스터라이저 설정 
 	rasterDesc.FillMode = D3D11_FILL_SOLID;//폴리곤을 그림
-	rasterDesc.CullMode = D3D11_CULL_BACK;//폴리곤 앞면만 그림
+	rasterDesc.CullMode = D3D11_CULL_NONE;//폴리곤 양면을 그림
 	rasterDesc.FrontCounterClockwise = false;//시계 방향으로 그려진 폴리곤이 앞면
 	rasterDesc.DepthBias = 0;//깊이 바이어스 깊이 값
 	rasterDesc.DepthBiasClamp = 0.0f;//픽셀의 최대 깊이 바이어스
@@ -358,29 +447,6 @@ bool D3DClass::Initialize(HWND hwnd)
 
 	//2D 렌더링을 위해 Orthographic Projection(직교 투영) 행렬 생성
 	m_orthoMatrix = DirectX::XMMatrixOrthographicLH((float)SCREEN_WIDTH, (float)SCREEN_HEIGHT, SCREEN_NEAR, SCREEN_FAR);
-
-	//2D 깊이 스텐실 설정
-	depthDisabledStencilDesc.DepthEnable = false;
-	depthDisabledStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	depthDisabledStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-	depthDisabledStencilDesc.StencilEnable = true;
-	depthDisabledStencilDesc.StencilReadMask = 0xFF;
-	depthDisabledStencilDesc.StencilWriteMask = 0xFF;
-	depthDisabledStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	depthDisabledStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-	depthDisabledStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	depthDisabledStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-	depthDisabledStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	depthDisabledStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-	depthDisabledStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	depthDisabledStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-	//2D 깊이 스텐실 상태 생성
-	result = m_device->CreateDepthStencilState(&depthDisabledStencilDesc, &m_depthDisabledStencilState);
-	if (FAILED(result))
-	{
-		return false;
-	}
 
 	//변수 초기화
 	ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
@@ -578,7 +644,7 @@ void D3DClass::ResetRenderTarget()
 	return;
 }
 
-void D3DClass::TurnZBufferOn()
+void D3DClass::ResetDepthStencilState()
 {
 	m_deviceContext->OMSetDepthStencilState(m_depthStencilState, 1);
 	return;
@@ -587,6 +653,19 @@ void D3DClass::TurnZBufferOn()
 void D3DClass::TurnZBufferOff()
 {
 	m_deviceContext->OMSetDepthStencilState(m_depthDisabledStencilState, 1);
+	return;
+}
+
+void D3DClass::TurnMirror()
+{
+	m_deviceContext->OMSetDepthStencilState(m_mirrorState, 1);
+	return;
+}
+
+void D3DClass::TurnMask()
+{
+	m_deviceContext->OMSetDepthStencilState(m_maskState, 1);
+	m_deviceContext->ClearDepthStencilView(m_depthStencilView, D3D11_CLEAR_STENCIL, 1.0f, 0);
 	return;
 }
 

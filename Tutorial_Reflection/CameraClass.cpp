@@ -44,7 +44,6 @@ void CameraClass::SetBaseViewMatrix()
 	upVector = DirectX::XMVector3TransformCoord(m_upVector, rotationMatrix);
 	lookAtVector = DirectX::XMVectorAdd(positionVector, lookAtVector);
 	m_baseViewMatrix = DirectX::XMMatrixLookAtLH(positionVector, lookAtVector, upVector);
-
 }
 
 void CameraClass::SetPosition(DirectX::XMFLOAT3 position)
@@ -117,14 +116,8 @@ void CameraClass::Render()
 	lookAtVector = DirectX::XMVectorAdd(positionVector, lookAtVector);
 	m_viewMatrix = DirectX::XMMatrixLookAtLH(positionVector, lookAtVector, upVector);
 
-	//ReflectionMatrix
-	{
-
-	}
-
 	return;
 }
-
 
 void CameraClass::MoveForward(bool keyDown)
 {

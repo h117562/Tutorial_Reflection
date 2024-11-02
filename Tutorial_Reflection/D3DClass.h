@@ -43,8 +43,10 @@ public:
 
 	void ResetRenderTarget();
 
-	void TurnZBufferOn();
+	void ResetDepthStencilState();
 	void TurnZBufferOff();
+	void TurnMirror();
+	void TurnMask();
 
 	void EnableAlphaBlending();
 	void DisableAlphaBlending();
@@ -64,6 +66,9 @@ private:
 
 	ID3D11DepthStencilState* m_depthStencilState;
 	ID3D11DepthStencilState* m_depthDisabledStencilState;
+	ID3D11DepthStencilState* m_mirrorState;
+	ID3D11DepthStencilState* m_maskState;
+
 	ID3D11DepthStencilView* m_depthStencilView;
 	ID3D11Texture2D* m_depthStencilBuffer;
 

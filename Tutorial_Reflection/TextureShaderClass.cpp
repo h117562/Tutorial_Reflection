@@ -152,9 +152,9 @@ bool TextureShaderClass::Initialize(ID3D11Device* pDevice, HWND hwnd)
 
 	//Sampler State 설정
 	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;//텍스처 필터링 모드 (선형 보간)
-	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;//텍스처 좌표가 0에서 1사이를 반복하는 방법을 결정함
-	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;//이 경우에는 1로 나누어 나머지를 좌표로 사용
-	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;//D3D11_TEXTURE_ADDRESS_CLAMP는 초과하거나 미만인 경우 0 또는 1로 고정
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;//텍스처 좌표가 0에서 1사이를 반복하는 방법을 결정함
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;//이 경우에는 1로 나누어 나머지를 좌표로 사용
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;//D3D11_TEXTURE_ADDRESS_CLAMP는 초과하거나 미만인 경우 0 또는 1로 고정
 	sampDesc.MipLODBias = 0.0f;//Mipmap 오프셋
 	sampDesc.MaxAnisotropy = 1;//1~16
 	sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;//항상 비교 통과 (모든 비교가 true)
