@@ -102,6 +102,7 @@ void MirrorModel::Render(ID3D11DeviceContext* pDeviceContext)
 
 void MirrorModel::Shutdown()
 {
+
 	//정점, 인덱스 버퍼 해제
 	if (m_vertexBuffer)
 	{
@@ -113,5 +114,17 @@ void MirrorModel::Shutdown()
 	{
 		m_indexBuffer->Release();
 		m_indexBuffer = 0;
+	}
+
+	if (m_vertices)
+	{
+		delete[] m_vertices;
+		m_vertices = 0;
+	}
+
+	if (m_indices)
+	{
+		delete[] m_indices;
+		m_indices = 0;
 	}
 }

@@ -169,5 +169,17 @@ void RectangleModel::Shutdown()
 		m_indexBuffer = 0;
 	}
 
+	if (m_vertices)
+	{
+		delete[] m_vertices;
+		m_vertices = 0;
+	}
+
+	if (m_indices)
+	{
+		delete[] m_indices;
+		m_indices = 0;
+	}
+
 	return;
 }
