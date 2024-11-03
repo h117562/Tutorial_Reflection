@@ -3,7 +3,6 @@
 
 #include "TextureShaderClass.h"
 #include "ColorShaderClass.h"
-#include "ReflectShaderClass.h"
 
 class ShaderManager
 {
@@ -16,12 +15,10 @@ public:
 	void Shutdown();
 	TextureShaderClass* GetTextureShader();
 	ColorShaderClass* GetColorShader();
-	ReflectShaderClass* GetReflectShader();
 
 private:
 	TextureShaderClass* m_TextureShader;
 	ColorShaderClass* m_ColorShader;
-	ReflectShaderClass* m_ReflectShader;
 
 };
 

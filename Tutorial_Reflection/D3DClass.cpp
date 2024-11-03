@@ -301,60 +301,56 @@ bool D3DClass::Initialize(HWND hwnd)
 	}
 
 	{//°Å¿ï¿ë
-		D3D11_DEPTH_STENCIL_DESC mirrorDesc;
-		ZeroMemory(&mirrorDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
-
-		mirrorDesc.DepthEnable = true;
-		mirrorDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-		mirrorDesc.DepthFunc = D3D11_COMPARISON_LESS;
-
-		mirrorDesc.StencilEnable = true;
-		mirrorDesc.StencilReadMask = 0xFF;
-		mirrorDesc.StencilWriteMask = 0xFF;
-
-
-		mirrorDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		mirrorDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-		mirrorDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
-		mirrorDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-
-		mirrorDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		mirrorDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-		mirrorDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
-		mirrorDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-		result = m_device->CreateDepthStencilState(&mirrorDesc, &m_maskState);
-		if (FAILED(result))
-		{
-			return false;
-		}
-
-
 		D3D11_DEPTH_STENCIL_DESC maskDesc;
 		ZeroMemory(&maskDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
 
 		maskDesc.DepthEnable = true;
-		maskDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		maskDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
 		maskDesc.DepthFunc = D3D11_COMPARISON_LESS;
 
 		maskDesc.StencilEnable = true;
 		maskDesc.StencilReadMask = 0xFF;
 		maskDesc.StencilWriteMask = 0xFF;
 
-
 		maskDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 		maskDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-		maskDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		maskDesc.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;
-
+		maskDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+		maskDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 		maskDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 		maskDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-		maskDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		maskDesc.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
+		maskDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+		maskDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-		result = m_device->CreateDepthStencilState(&maskDesc, &m_mirrorState);
+		result = m_device->CreateDepthStencilState(&maskDesc, &m_maskState);
+		if (FAILED(result))
+		{
+			return false;
+		}
+
+
+		D3D11_DEPTH_STENCIL_DESC mirrorDesc;
+		ZeroMemory(&mirrorDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+
+		mirrorDesc.DepthEnable = true;
+		mirrorDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		mirrorDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+
+		mirrorDesc.StencilEnable = true;
+		mirrorDesc.StencilReadMask = 0xFF;
+		mirrorDesc.StencilWriteMask = 0xFF;
+
+		mirrorDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		mirrorDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		mirrorDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		mirrorDesc.FrontFace.StencilFunc = D3D11_COMPARISON_EQUAL;
+
+		mirrorDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		mirrorDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		mirrorDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		mirrorDesc.BackFace.StencilFunc = D3D11_COMPARISON_EQUAL;
+
+		result = m_device->CreateDepthStencilState(&mirrorDesc, &m_mirrorState);
 		if (FAILED(result))
 		{
 			return false;
@@ -495,6 +491,18 @@ void D3DClass::Shutdown()
 	{
 		m_alphaEnableBlendingState->Release();
 		m_alphaEnableBlendingState = 0;
+	}
+
+	if (m_mirrorState)
+	{
+		m_mirrorState->Release();
+		m_mirrorState = 0;
+	}
+
+	if (m_maskState)
+	{
+		m_maskState->Release();
+		m_maskState = 0;
 	}
 
 	if (m_depthDisabledStencilState)

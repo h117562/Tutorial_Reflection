@@ -9,7 +9,6 @@
 #include "UIManager.h"
 #include "TextClass.h"
 
-#include "RenderTextureClass.h"
 #include "RectangleModel.h"
 #include "MirrorModel.h"
 
@@ -35,7 +34,6 @@ private:
 	CameraClass* m_CameraClass;
 	UIManager* m_uiManager;
 
-	RenderTextureClass* m_renderTexture;
 	RectangleModel* m_rectangle;
 	MirrorModel* m_mirror;
 };

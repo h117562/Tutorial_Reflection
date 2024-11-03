@@ -143,8 +143,6 @@
     <ClCompile Include="InputClass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RectangleModel.cpp" />
-    <ClCompile Include="ReflectShaderClass.cpp" />
-    <ClCompile Include="RenderTextureClass.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="SystemClass.cpp" />
     <ClCompile Include="TextClass.cpp" />
@@ -163,8 +161,6 @@
     <ClInclude Include="MirrorModel.h" />
     <ClInclude Include="InputClass.h" />
     <ClInclude Include="RectangleModel.h" />
-    <ClInclude Include="ReflectShaderClass.h" />
-    <ClInclude Include="RenderTextureClass.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="SystemClass.h" />
     <ClInclude Include="TextClass.h" />
@@ -176,12 +172,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\ColorVS.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="..\ReflectPS.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="..\ReflectVS.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\TexturePS.hlsl">
