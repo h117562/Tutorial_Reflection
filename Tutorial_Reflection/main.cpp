@@ -1,10 +1,7 @@
-#include "Systemclass.h"
-
-#pragma comment(linker , "/entry:WinMainCRTStartup /subsystem:console")
-
 #include <Windows.h>
 
 #include "Global.h"
+#include "Systemclass.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline, int iCmdshow)
 {
